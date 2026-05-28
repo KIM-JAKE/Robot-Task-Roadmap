@@ -6,12 +6,16 @@ const state = {
   difficulty: "All",
   source: "All",
   frontierOnly: false,
-  view: "table"
+  view: "table",
+  guide: "Demo Tier"
 };
 
 const elements = {
   taskCount: document.querySelector("#taskCount"),
-  tierLegend: document.querySelector("#tierLegend"),
+  guideTitle: document.querySelector("#guideTitle"),
+  guideSummary: document.querySelector("#guideSummary"),
+  guideTabs: document.querySelector("#guideTabs"),
+  guideLegend: document.querySelector("#guideLegend"),
   searchInput: document.querySelector("#searchInput"),
   tierFilter: document.querySelector("#tierFilter"),
   hardwareFilter: document.querySelector("#hardwareFilter"),
@@ -31,10 +35,63 @@ const elements = {
   closeDialog: document.querySelector("#closeDialog")
 };
 
+const GUIDE_SECTIONS = {
+  "Demo Tier": {
+    summary: "A neutral public-facing ranking for selecting demo candidates, roadmap targets, internal milestones, and benchmark references.",
+    items: [
+      ["A - Flagship Demo", "Public-facing hero demo candidate. The outcome should be immediately legible to a non-technical viewer."],
+      ["B - Roadmap Candidate", "Medium-term target that may need more hardware integration, data, or a staged version."],
+      ["C - Capability Milestone", "Internal milestone for validating skills, data collection, or model behavior before a stronger demo."],
+      ["D - Reference Benchmark", "Frontier or benchmark reference used to calibrate ambition, not necessarily a near-term demo."]
+    ]
+  },
+  "Hardware": {
+    summary: "Hardware labels are grouped into five public-facing embodiments so the roadmap stays readable.",
+    items: [
+      ["Single arm", "One robot arm with a gripper for tabletop, appliance, wiping, sorting, and tool-use milestones."],
+      ["Dual arm", "Two arms working together for bimanual handling, deformables, folding, packaging, and assembly."],
+      ["5-finger hand", "Dexterous hand tasks involving fingertips, in-hand motion, tactile control, and small objects."],
+      ["Mobile", "Manipulator on a mobile base for room-scale tasks, delivery, appliances, and navigation plus manipulation."],
+      ["Humanoid", "Upper-body or full-body humanoid direction for human-space kitchen, home, and industrial station demos."]
+    ]
+  },
+  "Difficulty": {
+    summary: "Difficulty estimates physical complexity, integration risk, data burden, and demo reliability.",
+    items: [
+      ["Medium", "Feasible as a near-term milestone with constrained setup and moderate data collection."],
+      ["High", "Requires robust perception, contact handling, sequencing, or bimanual coordination."],
+      ["Frontier", "Comparable to frontier company or advanced benchmark demos; useful as a roadmap anchor."]
+    ]
+  },
+  "Source Type": {
+    summary: "Source labels separate frontier company examples, academic work, benchmarks, open-source references, and lab-level reproductions.",
+    items: [
+      ["Frontier Company", "Public examples from companies building general-purpose robot models or humanoid systems."],
+      ["Academic", "Research demos or papers that provide strong task inspiration."],
+      ["Benchmark", "Structured evaluation tasks useful for capability tracking."],
+      ["Open-source", "Tasks from released models, datasets, or project pages."],
+      ["Lab-level", "Tasks that labs or makers have shown with lower-cost platforms and can be adapted locally."]
+    ]
+  }
+};
+
+const HARDWARE_GROUPS = {
+  "Franka single arm": "Single arm",
+  "Dual Franka": "Dual arm",
+  "Right 5-finger hand": "5-finger hand",
+  "Mobile manipulator": "Mobile",
+  "Future humanoid": "Humanoid",
+  "SO101/ALOHA": "Dual arm"
+};
+
 function uniqueValues(key) {
   return [...new Set(TASKS.flatMap(task => Array.isArray(task[key]) ? task[key] : [task[key]]))]
     .filter(Boolean)
     .sort((a, b) => a.localeCompare(b));
+}
+
+function hardwareLabels(task) {
+  return [...new Set(task.hardware.map(value => HARDWARE_GROUPS[value] || value))];
 }
 
 function fillSelect(select, values) {
@@ -43,23 +100,37 @@ function fillSelect(select, values) {
 
 function initFilters() {
   fillSelect(elements.tierFilter, uniqueValues("demoTier"));
-  fillSelect(elements.hardwareFilter, uniqueValues("hardware"));
+  fillSelect(elements.hardwareFilter, [...new Set(TASKS.flatMap(hardwareLabels))].sort((a, b) => a.localeCompare(b)));
   fillSelect(elements.categoryFilter, uniqueValues("category"));
   fillSelect(elements.difficultyFilter, uniqueValues("difficulty"));
   fillSelect(elements.sourceFilter, uniqueValues("sourceType"));
 }
 
-function renderTierLegend() {
-  elements.tierLegend.innerHTML = TIER_EXPLANATIONS.map(item => `
+function renderGuide() {
+  const guide = GUIDE_SECTIONS[state.guide];
+  elements.guideTitle.textContent = state.guide;
+  elements.guideSummary.textContent = guide.summary;
+  elements.guideTabs.innerHTML = Object.keys(GUIDE_SECTIONS).map(name => `
+    <button class="${name === state.guide ? "is-active" : ""}" type="button" data-guide="${escapeAttribute(name)}">${escapeHtml(name)}</button>
+  `).join("");
+  elements.guideLegend.innerHTML = guide.items.map(([name, description]) => `
     <article class="tier-card">
-      <strong>${escapeHtml(item.name)}</strong>
-      <p>${escapeHtml(item.description)}</p>
+      <strong>${escapeHtml(name)}</strong>
+      <p>${escapeHtml(description)}</p>
     </article>
   `).join("");
+
+  elements.guideTabs.querySelectorAll("[data-guide]").forEach(button => {
+    button.addEventListener("click", () => {
+      state.guide = button.dataset.guide;
+      renderGuide();
+    });
+  });
 }
 
 function matchesArrayFilter(task, key, value) {
   if (value === "All") return true;
+  if (key === "hardware") return hardwareLabels(task).includes(value);
   const field = task[key];
   return Array.isArray(field) ? field.includes(value) : field === value;
 }
@@ -98,14 +169,7 @@ function render() {
 }
 
 function renderStats(tasks) {
-  const tiers = countBy(tasks, "demoTier");
-  const hardware = countByArray(tasks, "hardware");
-  elements.stats.innerHTML = `
-    <div><strong>${tasks.length}</strong><span>Visible tasks</span></div>
-    <div><strong>${tasks.filter(task => task.frontierExample).length}</strong><span>Frontier examples</span></div>
-    <div><strong>${tiers["A - Flagship Demo"] || 0}</strong><span>Flagship candidates</span></div>
-    <div><strong>${hardware["Dual Franka"] || 0}</strong><span>Dual Franka fit</span></div>
-  `;
+  elements.stats.innerHTML = "";
 }
 
 function renderCharts(tasks) {
@@ -113,7 +177,7 @@ function renderCharts(tasks) {
     {
       title: "Hardware Fit",
       note: "multi-select matches",
-      counts: countByArray(tasks, "hardware")
+      counts: countHardware(tasks)
     },
     {
       title: "Difficulty",
@@ -183,7 +247,7 @@ function renderCards(tasks) {
           </div>
           <h3>${escapeHtml(task.task)}</h3>
           <p>${escapeHtml(task.rationale)}</p>
-          <div class="chips">${task.hardware.slice(0, 3).map(chip).join("")}</div>
+          <div class="chips">${hardwareLabels(task).slice(0, 3).map(chip).join("")}</div>
         </div>
       </button>
     </article>
@@ -213,7 +277,7 @@ function renderTable(tasks) {
     <tr>
       <td><button class="table-link" type="button" data-index="${TASKS.indexOf(task)}">${escapeHtml(task.task)}</button></td>
       <td>${escapeHtml(task.demoTier)}</td>
-      <td>${escapeHtml(task.hardware.join(", "))}</td>
+      <td>${escapeHtml(hardwareLabels(task).join(", "))}</td>
       <td>${escapeHtml(task.category.join(", "))}</td>
       <td>${escapeHtml(task.difficulty)}</td>
       <td>${escapeHtml(task.sourceOrg.join(", "))}</td>
@@ -228,13 +292,13 @@ function renderTable(tasks) {
 function openDetail(task) {
   elements.detailContent.innerHTML = `
     <div class="detail">
-      ${renderVisual(task)}
-      <div>
+      <div class="detail__media">${renderVisual(task)}</div>
+      <div class="detail__content">
         <p class="eyebrow">${escapeHtml(task.demoTier)} · ${escapeHtml(task.difficulty)}</p>
         <h2>${escapeHtml(task.task)}</h2>
         <p>${escapeHtml(task.rationale)}</p>
         <dl>
-          <dt>Hardware Fit</dt><dd>${escapeHtml(task.hardware.join(", "))}</dd>
+          <dt>Hardware Fit</dt><dd>${escapeHtml(hardwareLabels(task).join(", "))}</dd>
           <dt>Category</dt><dd>${escapeHtml(task.category.join(", "))}</dd>
           <dt>Complexity</dt><dd>${escapeHtml(task.complexity.join(", "))}</dd>
           <dt>Source</dt><dd>${escapeHtml(task.sourceOrg.join(", "))}</dd>
@@ -308,6 +372,13 @@ function countBy(tasks, key) {
 function countByArray(tasks, key) {
   return tasks.reduce((counts, task) => {
     task[key].forEach(value => counts[value] = (counts[value] || 0) + 1);
+    return counts;
+  }, {});
+}
+
+function countHardware(tasks) {
+  return tasks.reduce((counts, task) => {
+    hardwareLabels(task).forEach(value => counts[value] = (counts[value] || 0) + 1);
     return counts;
   }, {});
 }
@@ -410,7 +481,7 @@ function escapeAttribute(value) {
   return escapeHtml(value);
 }
 
-renderTierLegend();
+renderGuide();
 initFilters();
 bindEvents();
 render();

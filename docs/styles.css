@@ -121,6 +121,28 @@ main {
   padding: 14px;
 }
 
+.guide-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.guide-tabs button {
+  min-height: 30px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--text);
+  padding: 0 10px;
+}
+
+.guide-tabs button.is-active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
 .overview__copy p,
 .tier-card p,
 .summary p,
@@ -229,10 +251,7 @@ select {
 }
 
 .stats {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
-  margin: 10px 0 14px;
+  display: none;
 }
 
 .stats div {
@@ -480,10 +499,12 @@ th {
 }
 
 dialog {
-  width: min(920px, calc(100vw - 28px));
+  width: min(1040px, calc(100vw - 28px));
+  max-height: calc(100vh - 28px);
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 0;
+  overflow: auto;
   box-shadow: 0 28px 80px rgba(0,0,0,0.28);
 }
 
@@ -506,15 +527,26 @@ dialog::backdrop {
 
 .detail {
   display: grid;
-  grid-template-columns: 0.85fr 1fr;
-  gap: 24px;
-  padding: 22px;
+  grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1fr);
+  gap: 22px;
+  padding: 22px 56px 22px 22px;
+}
+
+.detail__media {
+  min-width: 0;
+}
+
+.detail__content {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .detail .task-card__visual,
 .detail .task-card__image {
   border: 1px solid var(--line);
   border-radius: 8px;
+  max-height: 56vh;
+  object-fit: cover;
 }
 
 dl {
@@ -581,5 +613,9 @@ dd {
 
   .filters {
     position: static;
+  }
+
+  .detail {
+    padding: 18px;
   }
 }
