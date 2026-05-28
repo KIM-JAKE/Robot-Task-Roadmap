@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Robot Task Roadmap</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Robot Task Roadmap</p>
+        <h1>VLA Demo Task Pool</h1>
+      </div>
+      <div class="topbar__meta">
+        <span id="taskCount">0 tasks</span>
+        <span>GitHub Pages prototype</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="overview" aria-label="Demo tier explanation">
+        <div class="overview__copy">
+          <h2>Demo Tier</h2>
+          <p>
+            A neutral public-facing ranking for selecting demo candidates, roadmap targets,
+            internal milestones, and benchmark references.
+          </p>
+        </div>
+        <div id="tierLegend" class="tier-grid"></div>
+      </section>
+
+      <section class="filters" aria-label="Interactive filters">
+        <div class="filter-row">
+          <label>
+            Search
+            <input id="searchInput" type="search" placeholder="task, source, rationale...">
+          </label>
+          <label>
+            Demo Tier
+            <select id="tierFilter"></select>
+          </label>
+          <label>
+            Hardware
+            <select id="hardwareFilter"></select>
+          </label>
+          <label>
+            Category
+            <select id="categoryFilter"></select>
+          </label>
+          <label>
+            Difficulty
+            <select id="difficultyFilter"></select>
+          </label>
+          <label>
+            Source
+            <select id="sourceFilter"></select>
+          </label>
+        </div>
+        <div class="filter-actions">
+          <button id="frontierToggle" type="button" aria-pressed="false">Frontier examples only</button>
+          <button id="resetFilters" type="button">Reset filters</button>
+        </div>
+      </section>
+
+      <section class="content-grid">
+        <aside class="summary" aria-label="Summary">
+          <h2>Current Selection</h2>
+          <div id="stats" class="stats"></div>
+          <h3>Image Support</h3>
+          <p>
+            Each task has an optional <code>imageUrl</code> field in <code>docs/data.js</code>.
+            Add a lab photo or licensed image URL and it will render in both card and detail views.
+          </p>
+        </aside>
+
+        <section class="task-section" aria-label="Task table and cards">
+          <div class="view-switcher">
+            <button class="is-active" data-view="table" type="button">Table</button>
+            <button data-view="cards" type="button">Cards</button>
+          </div>
+          <div id="tableView" class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Task</th>
+                  <th>Demo Tier</th>
+                  <th>Hardware</th>
+                  <th>Category</th>
+                  <th>Difficulty</th>
+                  <th>Source</th>
+                </tr>
+              </thead>
+              <tbody id="taskTable"></tbody>
+            </table>
+          </div>
+          <div id="cardsView" class="cards" hidden></div>
+        </section>
+      </section>
+    </main>
+
+    <dialog id="detailDialog">
+      <button id="closeDialog" class="dialog-close" type="button" aria-label="Close">×</button>
+      <div id="detailContent"></div>
+    </dialog>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
