@@ -195,8 +195,9 @@ function renderCards(tasks) {
 }
 
 function renderVisual(task) {
-  if (task.imageUrl) {
-    return `<img class="task-card__image" src="${escapeAttribute(task.imageUrl)}" alt="">`;
+  const imageUrl = task.imageUrl || inferredImageUrl(task);
+  if (imageUrl) {
+    return `<img class="task-card__image" src="${escapeAttribute(imageUrl)}" alt="" loading="lazy" referrerpolicy="no-referrer">`;
   }
   const label = task.category[0] || "Task";
   return `
@@ -348,6 +349,43 @@ function visualMark(task) {
   if (task.category.includes("Cleaning")) return "CL";
   if (task.category.includes("Clutter Sorting")) return "CS";
   return "VL";
+}
+
+function inferredImageUrl(task) {
+  if (task.sourceOrg.includes("Figure AI")) {
+    return "https://images.ctfassets.net/qx5k8y1u9drj/2wRk1FxvA5mPvUStmShycO/ce2db2efd18b9e90005dc8b7684cd936/DISHES_1200x630__1.jpg";
+  }
+  if (task.sourceOrg.includes("Stanford/Mobile ALOHA")) {
+    return "https://mobile-aloha.github.io/static/images/preview.gif";
+  }
+  if (task.sourceOrg.includes("Physical Intelligence")) {
+    return "https://www.pi.website/images/pi0-og.png";
+  }
+  if (task.sourceOrg.includes("ALOHA/ACT")) {
+    return "https://tonyzhaozh.github.io/aloha/resources/algo.png";
+  }
+  if (task.sourceOrg.includes("BridgeData")) {
+    if (task.category.includes("Cleaning")) {
+      return "https://rail-berkeley.github.io/bridgedata/teaser_videos/bridge_data_v1_berkeley_realkitchen1_counter_pick_up_sponge_and_wipe_plate.jpg";
+    }
+    if (task.category.includes("Laundry")) {
+      return "https://rail-berkeley.github.io/bridgedata/teaser_videos/bridge_data_v2_datacol2_folding_table_fold_cloth_pnp_01.jpg";
+    }
+    return "https://rail-berkeley.github.io/bridgedata/figures/teaser.png";
+  }
+  if (task.category.includes("Laundry")) {
+    return "https://www.pi.website/images/pi0-og.png";
+  }
+  if (task.category.includes("Kitchen") || task.category.includes("Household")) {
+    return "https://rail-berkeley.github.io/bridgedata/teaser_videos/bridge_data_v1_berkeley_realkitchen1_dishwasher_pick_up_any_cup.jpg";
+  }
+  if (task.category.includes("Tool Use")) {
+    return "https://rail-berkeley.github.io/bridgedata/teaser_videos/bridge_data_v1_berkeley_tool_chest_pick_up_closest_rainbow_Allen_key_set.jpg";
+  }
+  if (task.category.includes("Clutter Sorting")) {
+    return "https://rail-berkeley.github.io/bridgedata/teaser_videos/bridge_data_v2_datacol2_tabletop_dark_wood_many_skills_00.jpg";
+  }
+  return "";
 }
 
 function accentFor(tier) {
