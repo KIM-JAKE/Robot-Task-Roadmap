@@ -21,6 +21,7 @@ const elements = {
   frontierToggle: document.querySelector("#frontierToggle"),
   resetFilters: document.querySelector("#resetFilters"),
   stats: document.querySelector("#stats"),
+  charts: document.querySelector("#charts"),
   cardsView: document.querySelector("#cardsView"),
   tableView: document.querySelector("#tableView"),
   taskTable: document.querySelector("#taskTable"),
@@ -91,6 +92,7 @@ function render() {
   const tasks = filteredTasks();
   elements.taskCount.textContent = `${tasks.length} of ${TASKS.length} tasks`;
   renderStats(tasks);
+  renderCharts(tasks);
   renderCards(tasks);
   renderTable(tasks);
 }
@@ -103,6 +105,69 @@ function renderStats(tasks) {
     <div><strong>${tasks.filter(task => task.frontierExample).length}</strong><span>Frontier examples</span></div>
     <div><strong>${tiers["A - Flagship Demo"] || 0}</strong><span>Flagship candidates</span></div>
     <div><strong>${hardware["Dual Franka"] || 0}</strong><span>Dual Franka fit</span></div>
+  `;
+}
+
+function renderCharts(tasks) {
+  const chartData = [
+    {
+      title: "Hardware Fit",
+      note: "multi-select matches",
+      counts: countByArray(tasks, "hardware")
+    },
+    {
+      title: "Difficulty",
+      note: "tasks",
+      counts: countBy(tasks, "difficulty")
+    },
+    {
+      title: "Demo Tier",
+      note: "tasks",
+      counts: countBy(tasks, "demoTier")
+    },
+    {
+      title: "Source Type",
+      note: "tasks",
+      counts: countBy(tasks, "sourceType")
+    }
+  ];
+
+  elements.charts.innerHTML = chartData.map(chart => renderChart(chart)).join("");
+}
+
+function renderChart({ title, note, counts }) {
+  const entries = Object.entries(counts)
+    .filter(([, count]) => count > 0)
+    .sort((a, b) => b[1] - a[1]);
+  const total = entries.reduce((sum, [, count]) => sum + count, 0);
+  const gradient = conicGradient(entries, total);
+  const topLabel = entries[0] ? entries[0][0] : "No data";
+
+  return `
+    <article class="chart-card">
+      <div class="chart-card__head">
+        <div>
+          <h3>${escapeHtml(title)}</h3>
+          <p>${escapeHtml(note)}</p>
+        </div>
+        <strong>${total}</strong>
+      </div>
+      <div class="chart-card__body">
+        <div class="donut" style="background:${gradient}" aria-label="${escapeAttribute(title)} distribution">
+          <span>${escapeHtml(String(total))}</span>
+        </div>
+        <div class="chart-legend">
+          ${entries.slice(0, 7).map(([label, count], index) => `
+            <div>
+              <i style="background:${chartColor(index)}"></i>
+              <span>${escapeHtml(label)}</span>
+              <b>${count}</b>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+      <p class="chart-card__foot">Top: ${escapeHtml(topLabel)}</p>
+    </article>
   `;
 }
 
@@ -224,8 +289,8 @@ function bindEvents() {
     button.addEventListener("click", () => {
       state.view = button.dataset.view;
       elements.viewButtons.forEach(item => item.classList.toggle("is-active", item === button));
-      elements.cardsView.hidden = state.view !== "cards";
       elements.tableView.hidden = state.view !== "table";
+      elements.cardsView.hidden = state.view !== "cards";
     });
   });
 
@@ -244,6 +309,31 @@ function countByArray(tasks, key) {
     task[key].forEach(value => counts[value] = (counts[value] || 0) + 1);
     return counts;
   }, {});
+}
+
+function conicGradient(entries, total) {
+  if (!total) return "#e5e0d6";
+  let start = 0;
+  const stops = entries.map(([, count], index) => {
+    const end = start + (count / total) * 100;
+    const stop = `${chartColor(index)} ${start.toFixed(2)}% ${end.toFixed(2)}%`;
+    start = end;
+    return stop;
+  });
+  return `conic-gradient(${stops.join(", ")})`;
+}
+
+function chartColor(index) {
+  return [
+    "#d94f36",
+    "#4f7a67",
+    "#536f91",
+    "#b7791f",
+    "#7b5f9e",
+    "#c25f83",
+    "#69717c",
+    "#8b6f47"
+  ][index % 8];
 }
 
 function chip(value) {

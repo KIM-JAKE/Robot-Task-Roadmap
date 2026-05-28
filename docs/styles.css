@@ -11,10 +11,15 @@
   --blue: #536f91;
   --shadow: 0 16px 40px rgba(57, 48, 34, 0.10);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 17px;
 }
 
 * {
   box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
 }
 
 body {
@@ -43,7 +48,7 @@ button {
   justify-content: space-between;
   gap: 24px;
   align-items: flex-end;
-  padding: 22px clamp(18px, 3vw, 40px) 16px;
+  padding: 24px clamp(20px, 3vw, 44px) 18px;
   border-bottom: 1px solid var(--line);
 }
 
@@ -65,7 +70,7 @@ p {
 
 h1 {
   margin-bottom: 0;
-  font-size: clamp(1.65rem, 3vw, 2.8rem);
+  font-size: clamp(1.9rem, 3.2vw, 3.1rem);
   line-height: 0.98;
   letter-spacing: 0;
 }
@@ -85,12 +90,12 @@ h1 {
   color: var(--muted);
   border-radius: 999px;
   padding: 7px 10px;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   white-space: nowrap;
 }
 
 main {
-  padding: 16px clamp(18px, 3vw, 40px) 42px;
+  padding: 18px clamp(20px, 3vw, 44px) 44px;
 }
 
 .overview {
@@ -114,7 +119,7 @@ main {
 }
 
 .overview__copy {
-  padding: 14px;
+  padding: 16px;
 }
 
 .overview__copy p,
@@ -143,14 +148,14 @@ main {
 
 .tier-card p {
   margin-bottom: 0;
-  font-size: 0.78rem;
+  font-size: 0.84rem;
 }
 
 .filters {
   position: sticky;
   top: 0;
   z-index: 3;
-  padding: 12px;
+  padding: 14px;
   margin-bottom: 14px;
   backdrop-filter: blur(16px);
 }
@@ -165,7 +170,7 @@ label {
   display: grid;
   gap: 7px;
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 700;
   text-transform: uppercase;
 }
@@ -173,7 +178,7 @@ label {
 input,
 select {
   width: 100%;
-  min-height: 34px;
+  min-height: 38px;
   border: 1px solid var(--line);
   border-radius: 6px;
   background: #fff;
@@ -191,7 +196,7 @@ select {
 .filter-actions button,
 .view-switcher button,
 .reference {
-  min-height: 32px;
+  min-height: 36px;
   border: 1px solid var(--line);
   border-radius: 6px;
   background: #fff;
@@ -216,7 +221,7 @@ select {
 
 .summary {
   position: static;
-  padding: 12px;
+  padding: 14px;
 }
 
 .summary h2,
@@ -240,13 +245,111 @@ select {
 }
 
 .stats strong {
-  font-size: 1.2rem;
+  font-size: 1.32rem;
 }
 
 .stats span {
   color: var(--muted);
-  font-size: 0.86rem;
+  font-size: 0.9rem;
   text-align: left;
+}
+
+.charts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.chart-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: rgba(255,255,255,0.78);
+}
+
+.chart-card__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.chart-card h3 {
+  margin: 0 0 3px;
+  font-size: 1rem;
+}
+
+.chart-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.chart-card__head strong {
+  font-size: 1.2rem;
+}
+
+.chart-card__body {
+  display: grid;
+  grid-template-columns: 86px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+}
+
+.donut {
+  display: grid;
+  place-items: center;
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  position: relative;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.04);
+}
+
+.donut::after {
+  content: "";
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid var(--line);
+}
+
+.donut span {
+  position: relative;
+  z-index: 1;
+  font-weight: 800;
+}
+
+.chart-legend {
+  display: grid;
+  gap: 5px;
+}
+
+.chart-legend div {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr) auto;
+  gap: 7px;
+  align-items: center;
+  font-size: 0.82rem;
+}
+
+.chart-legend i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.chart-legend span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chart-card__foot {
+  margin-top: 10px !important;
 }
 
 .view-switcher {
@@ -352,10 +455,10 @@ table {
 th,
 td {
   border-bottom: 1px solid var(--line);
-  padding: 9px 10px;
+  padding: 10px 11px;
   text-align: left;
   vertical-align: top;
-  font-size: 0.82rem;
+  font-size: 0.92rem;
 }
 
 th {
@@ -364,7 +467,7 @@ th {
   z-index: 1;
   background: #f2eee6;
   color: var(--muted);
-  font-size: 0.76rem;
+  font-size: 0.82rem;
   text-transform: uppercase;
 }
 
@@ -453,6 +556,10 @@ dd {
   .cards {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .charts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 760px) {
@@ -468,6 +575,7 @@ dd {
   .filter-row,
   .tier-grid,
   .cards,
+  .charts,
   .detail {
     grid-template-columns: 1fr;
   }
