@@ -144,6 +144,22 @@ const TASKS = [
     imageUrl: ""
   },
   {
+    task: "Cross-room instruction following with navigation and manipulation",
+    category: ["Mobile Manipulation", "Household", "Long Horizon"],
+    hardware: ["Mobile manipulator", "Future humanoid"],
+    embodiment: ["Mobile", "Humanoid Full Body"],
+    sourceType: "Academic",
+    sourceOrg: ["Qwen-VLA"],
+    frontierExample: true,
+    difficulty: "Frontier",
+    demoTier: "B - Roadmap Candidate",
+    complexity: ["Navigation", "Long-horizon memory", "Semantic sorting", "Error recovery"],
+    rationale: "Qwen-VLA is notable because it unifies manipulation, vision-language navigation, and trajectory prediction in one action-and-trajectory framework.",
+    reference: "https://arxiv.org/abs/2605.30280",
+    notes: "Stage as: navigate to a named room or station, find an object from language, then place it at a goal location.",
+    imageUrl: ""
+  },
+  {
     task: "Microwave operation: open, insert, close",
     category: ["Kitchen", "Household", "Long Horizon"],
     hardware: ["Franka single arm", "Mobile manipulator"],
@@ -368,6 +384,22 @@ const TASKS = [
     imageUrl: ""
   },
   {
+    task: "Cook breakfast with dexterous hands",
+    category: ["Kitchen", "Dexterous Hand", "Tool Use", "Long Horizon"],
+    hardware: ["Future humanoid", "Right 5-finger hand"],
+    embodiment: ["Humanoid Upper Body", "5-Finger Hand"],
+    sourceType: "Frontier Company",
+    sourceOrg: ["Genesis AI"],
+    frontierExample: true,
+    difficulty: "Frontier",
+    demoTier: "D - Reference Benchmark",
+    complexity: ["Tool use", "Force control", "Bimanual coordination", "Long-horizon memory", "Liquid/wet contact"],
+    rationale: "GENE-26.5 demonstrates a long cooking sequence with egg cracking, tomato cutting, whisking, towel use, salt mill use, spatula handling, and pan interaction.",
+    reference: "https://www.genesis.ai/blog/gene-26-5-advancing-robotic-manipulation-to-human-level",
+    notes: "Treat as a north-star dexterous reference; reduce to one subtask such as egg cracking or knife-assisted transfer for local demos.",
+    imageUrl: ""
+  },
+  {
     task: "Call elevator and enter",
     category: ["Mobile Manipulation", "HRI", "Long Horizon"],
     hardware: ["Mobile manipulator", "Future humanoid"],
@@ -477,6 +509,22 @@ const TASKS = [
     rationale: "Open-vocabulary retrieval from clutter is a clean VLA story.",
     reference: "https://huggingface.co/docs/lerobot/main/vlabench",
     notes: "Prompt example: find the item used for cutting paper.",
+    imageUrl: ""
+  },
+  {
+    task: "Spatially guided clustered pick-and-place",
+    category: ["Clutter Sorting", "Benchmark"],
+    hardware: ["Franka single arm", "Mobile manipulator"],
+    embodiment: ["1-arm", "Mobile", "Franka Gripper"],
+    sourceType: "Open-source",
+    sourceOrg: ["InternVLA-M1"],
+    frontierExample: true,
+    difficulty: "High",
+    demoTier: "A - Flagship Demo",
+    complexity: ["Dense clutter", "Semantic sorting", "Small object", "Error recovery"],
+    rationale: "InternVLA-M1 centers spatial grounding: the model predicts where to act before producing embodiment-aware actions, improving clustered pick-and-place and unseen-object generalization.",
+    reference: "https://arxiv.org/abs/2510.13778",
+    notes: "Good concrete task for testing pointing, box, or trace prompts before full long-horizon demos.",
     imageUrl: ""
   },
   {
@@ -688,6 +736,22 @@ const TASKS = [
     imageUrl: ""
   },
   {
+    task: "Dynamic tabletop manipulation after visual foresight",
+    category: ["Benchmark", "Clutter Sorting"],
+    hardware: ["Franka single arm", "Dual Franka"],
+    embodiment: ["1-arm", "2-arm", "Franka Gripper"],
+    sourceType: "Academic",
+    sourceOrg: ["InternVLA-A1"],
+    frontierExample: true,
+    difficulty: "Frontier",
+    demoTier: "B - Roadmap Candidate",
+    complexity: ["Temporal timing", "Dense clutter", "Semantic sorting", "Error recovery"],
+    rationale: "InternVLA-A1 explicitly combines scene understanding, visual foresight generation, and action execution, with large reported gains on dynamic manipulation tasks.",
+    reference: "https://arxiv.org/abs/2601.02456",
+    notes: "Use a rolling or sliding object setup to test whether the policy anticipates future state rather than reacting only to the current frame.",
+    imageUrl: ""
+  },
+  {
     task: "Rinse used pan at faucet",
     category: ["Kitchen", "Cleaning", "Mobile Manipulation", "Tool Use"],
     hardware: ["Mobile manipulator", "Dual Franka"],
@@ -813,6 +877,22 @@ const TASKS = [
     rationale: "A research-lab visual that supports scientific automation positioning.",
     reference: "https://huggingface.co/docs/lerobot/main/vlabench",
     notes: "Use colored tubes and racks.",
+    imageUrl: ""
+  },
+  {
+    task: "Lab pipetting and centrifuge loading",
+    category: ["Fine Assembly", "Tool Use", "Dexterous Hand", "Long Horizon"],
+    hardware: ["Right 5-finger hand", "Future humanoid"],
+    embodiment: ["5-Finger Hand", "Humanoid Upper Body"],
+    sourceType: "Frontier Company",
+    sourceOrg: ["Genesis AI"],
+    frontierExample: true,
+    difficulty: "Frontier",
+    demoTier: "A - Flagship Demo",
+    complexity: ["Small object", "Tool use", "Force control", "Long-horizon memory", "Liquid/wet contact"],
+    rationale: "Genesis AI's GENE-26.5 lab workflow combines pipette grasping, tip insertion, liquid transfer, tube sealing, button actuation, and centrifuge placement.",
+    reference: "https://www.genesis.ai/blog/gene-26-5-advancing-robotic-manipulation-to-human-level",
+    notes: "A strong lab-automation hero if staged with colored water, oversized tubes, and clear success metrics.",
     imageUrl: ""
   },
   {
